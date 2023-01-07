@@ -2,15 +2,18 @@ module github.com/cvetkovski98/zvax-auth
 
 go 1.19
 
+replace github.com/cvetkovski98/zvax-common => ../common
+
 require (
-	github.com/golang-jwt/jwt/v4 v4.4.2
+	github.com/cvetkovski98/zvax-common v0.0.0-20230104174536-9605b23c4599
+	github.com/golang-jwt/jwt/v4 v4.4.3
 	github.com/golang/protobuf v1.5.2
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.6.1
 	github.com/spf13/viper v1.14.0
-	github.com/uptrace/bun v1.1.8
-	golang.org/x/crypto v0.0.0-20220826181053-bd7e27e6170d
-	google.golang.org/grpc v1.50.1
+	github.com/uptrace/bun v1.1.9
+	golang.org/x/crypto v0.3.0
+	google.golang.org/grpc v1.51.0
 	google.golang.org/protobuf v1.28.1
 )
 
@@ -29,12 +32,12 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.4.1 // indirect
 	github.com/tmthrgd/go-hex v0.0.0-20190904060850-447a3041c3bc // indirect
-	github.com/uptrace/bun/dialect/pgdialect v1.1.8 // indirect
-	github.com/uptrace/bun/driver/pgdriver v1.1.8 // indirect
+	github.com/uptrace/bun/dialect/pgdialect v1.1.9 // indirect
+	github.com/uptrace/bun/driver/pgdriver v1.1.9 // indirect
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
-	golang.org/x/net v0.0.0-20221014081412-f15817d10f9b // indirect
-	golang.org/x/sys v0.0.0-20220908164124-27713097b956 // indirect
+	golang.org/x/net v0.2.0 // indirect
+	golang.org/x/sys v0.2.0 // indirect
 	golang.org/x/text v0.4.0 // indirect
 	google.golang.org/genproto v0.0.0-20221024183307-1bc688fe9f3e // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
