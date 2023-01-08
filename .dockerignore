@@ -1,0 +1,7 @@
+*.pb.go
+.DS_Store
+.git
+
+# these are copied explicitly in the Dockerfile
+.go.mod
+.go.sum
