@@ -19,7 +19,7 @@ RUN go mod download
 COPY . .
 
 # build the Go app
-RUN go build -o /run/zvax-auth .
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /zvax-auth .
 
 # final stage
 FROM scratch AS final
@@ -27,7 +27,7 @@ FROM scratch AS final
 WORKDIR /app
 
 # copy the executable
-COPY --from=build /run/zvax-auth .
+COPY --from=build /zvax-auth .
 
 # run the executable
-ENTRYPOINT [ "./zvax-auth" ]
+ENTRYPOINT [ "/app/zvax-auth" ]
