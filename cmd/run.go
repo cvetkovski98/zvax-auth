@@ -6,6 +6,7 @@ import (
 
 	"github.com/cvetkovski98/zvax-auth/internal/config"
 	"github.com/cvetkovski98/zvax-auth/internal/delivery"
+	"github.com/cvetkovski98/zvax-auth/internal/model/migrations"
 	"github.com/cvetkovski98/zvax-auth/internal/repository"
 	"github.com/cvetkovski98/zvax-auth/internal/service"
 	"github.com/cvetkovski98/zvax-common/gen/pbauth"
@@ -43,6 +44,9 @@ func run(cmd *cobra.Command, args []string) {
 	}
 	if err := repository.RegisterModels(cmd.Context(), db); err != nil {
 		log.Fatalf("failed to register models: %v", err)
+	}
+	if err := postgresql.Migrate(cmd.Context(), db, migrations.Migrations); err != nil {
+		log.Fatalf("failed to migrate database: %v", err)
 	}
 	authRepository := repository.NewPgAuthRepository(db)
 	authService := service.NewAuthServiceImpl(authRepository)
