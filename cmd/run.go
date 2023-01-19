@@ -3,6 +3,7 @@ package cmd
 import (
 	"log"
 	"net"
+	"sync"
 
 	"github.com/cvetkovski98/zvax-auth/internal/config"
 	"github.com/cvetkovski98/zvax-auth/internal/delivery"
@@ -10,6 +11,7 @@ import (
 	"github.com/cvetkovski98/zvax-auth/internal/repository"
 	"github.com/cvetkovski98/zvax-auth/internal/service"
 	"github.com/cvetkovski98/zvax-common/gen/pbauth"
+	"github.com/cvetkovski98/zvax-common/pkg/healthz"
 	"github.com/cvetkovski98/zvax-common/pkg/postgresql"
 	"github.com/spf13/cobra"
 	"google.golang.org/grpc"
@@ -32,11 +34,6 @@ func init() {
 }
 
 func run(cmd *cobra.Command, args []string) {
-	lis, err := net.Listen(network, address)
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-	log.Printf("Listening on %s://%s...", network, address)
 	cfg := config.GetConfig()
 	db, err := postgresql.NewPgDb(&cfg.PostgreSQL)
 	if err != nil {
@@ -53,7 +50,28 @@ func run(cmd *cobra.Command, args []string) {
 	authGrpc := delivery.NewAuthServer(authService)
 	server := grpc.NewServer()
 	pbauth.RegisterAuthServer(server, authGrpc)
-	if err := server.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
-	}
+
+	wg := new(sync.WaitGroup)
+	wg.Add(2)
+	go func() {
+		healtzSrv := healthz.CreateServer(80)
+		if err := healtzSrv.ListenAndServe(); err != nil {
+			log.Printf("error running healthz server: %v", err)
+		}
+		log.Println("Running healthz...")
+		wg.Done()
+	}()
+
+	go func() {
+		lis, err := net.Listen(network, address)
+		if err != nil {
+			log.Fatalf("failed to listen: %v", err)
+		}
+		if err := server.Serve(lis); err != nil {
+			log.Fatalf("failed to serve: %v", err)
+		}
+		log.Printf("Listening on %s://%s...", network, address)
+		wg.Done()
+	}()
+	wg.Wait()
 }
